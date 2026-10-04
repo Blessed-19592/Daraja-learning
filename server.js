@@ -17,6 +17,50 @@ async function getAccessToken() {
     return response.data.access_token;
 }
 
+async function stkPush() {
+    
+    const timestamp = new Date()
+    .toISOString()
+    .replace(/[-T:.Z]/g, "")
+    .slice(0, 14);
+
+    const shortCode = "174379";
+const passkey = "YOUR_PASSKEY";
+
+const password = Buffer.from(
+    shortCode + passkey + timestamp
+).toString("base64");
+
+const accessToken = await getAccessToken();
+
+const stkPushData = {
+    BusinessShortCode: shortCode,
+    Password: password,
+    Timestamp: timestamp,
+    TransactionType: "CustomerPayBillOnline",
+    Amount: 1,
+    PartyA: "254722000000",
+    PartyB: shortCode,
+    PhoneNumber: "254722000000",
+    CallBackURL: "https://example.com/callback",
+    AccountReference: "CARWASH",
+    TransactionDesc: "Car wash payment"
+};
+
+const response = await axios.post(
+    "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+    stkPushData,
+    {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        }
+    }
+);
+
+console.log(response.data);
+}
+
 getAccessToken()
     .then(token => {
         console.log("Access Token:", token);
