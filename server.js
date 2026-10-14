@@ -25,7 +25,7 @@ async function stkPush() {
     .slice(0, 14);
 
     const shortCode = "174379";
-const passkey = "YOUR_PASSKEY";
+const passkey = process.env.MPESA_PASSKEY;
 
 const password = Buffer.from(
     shortCode + passkey + timestamp
